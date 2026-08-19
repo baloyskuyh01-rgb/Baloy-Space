@@ -2,35 +2,59 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>BAL0Y — Social Journey Map</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GeoChat & Map App</title>
+    
+    <!-- Leaflet CSS untuk Peta -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    
     <style>
+        /* CSS Variabel Global */
+        :root {
+            --bg: #0F172A;
+            --surface: #1E293B;
+            --surface-2: #334155;
+            --text: #F8FAFC;
+            --muted: #94A3B8;
+            --primary: #3B82F6;
+            --accent: #22C55E;
+            --danger: #EF4444;
+            --gold: #F59E0B;
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 24px;
+            --radius-pill: 9999px;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            --blur: rgba(30, 41, 59, 0.85);
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
         * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
-        :root {
-            --bg: #0F172A; --surface: #1E293B; --surface-2: #334155;
-            --primary: #3B82F6; --accent: #22C55E; --danger: #EF4444;
-            --warning: #F59E0B; --purple: #8B5CF6; --pink: #EC4899;
-            --cyan: #06B6D4; --orange: #F97316; --brown: #78350F;
-            --text: #F8FAFC; --muted: #94A3B8; --gold: linear-gradient(135deg, #FBBF24, #F59E0B);
-            --overlay: rgba(15,23,42,0.85); --blur: rgba(30,41,59,0.7);
-            --radius-sm: 10px; --radius-md: 16px; --radius-lg: 24px; --radius-pill: 999px;
-            --shadow-sm: 0 2px 8px rgba(0,0,0,0.15); --shadow-md: 0 4px 16px rgba(0,0,0,0.25);
-            --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 0px);
-        }
-        body { background: var(--bg); color: var(--text); min-height: 100vh; overflow: hidden; }
-        #app { height: 100vh; display: flex; flex-direction: column; position: relative; }
 
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Animasi & Transisi */
         @keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
         @keyframes fadeInUp { from { opacity:0; transform: translateY(30px) scale(0.95); } to { opacity:1; transform: translateY(0) scale(1); } }
         @keyframes bounceBtn { 0%{transform:scale(1)} 35%{transform:scale(0.90)} 60%{transform:scale(1.05)} 100%{transform:scale(1)} }
         @keyframes pulseDot { 0%{box-shadow:0 0 0 0 rgba(34,197,94,0.4)} 70%{box-shadow:0 0 0 8px rgba(34,197,94,0)} 100%{box-shadow:0 0 0 0 rgba(34,197,94,0)} }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        
         .fade-in { animation: fadeIn 0.4s ease forwards; }
         .fade-in-up { animation: fadeInUp 0.5s ease forwards; }
         .bounce-btn:active { animation: bounceBtn 0.2s cubic-bezier(0.34,1.56,0.64,1); }
@@ -38,6 +62,7 @@
         .page-fade { transition: opacity 0.3s ease, transform 0.3s ease; }
         .hidden { display: none !important; }
 
+        /* Komponen Tombol & Badge */
         button, .btn {  
             border: none; cursor: pointer; font-size: 15px; font-weight: 600;  
             border-radius: var(--radius-pill); transition: all 0.15s cubic-bezier(0.34,1.56,0.64,1);  
@@ -47,7 +72,8 @@
         .btn-success { background: var(--accent); color: white; }  
         .btn-danger { background: var(--danger); color: white; }  
         .btn-outline { background: transparent; color: var(--primary); border: 1.5px solid var(--primary); padding: 12px 24px; }  
-        .btn-block { width: 100%; } .btn-sm { padding: 8px 16px; font-size: 13px; }  
+        .btn-block { width: 100%; } 
+        .btn-sm { padding: 8px 16px; font-size: 13px; }  
         .btn-gold { background: var(--gold); color: #451A03; }  
 
         .badge { display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; border-radius: var(--radius-pill); padding: 2px 8px; line-height: 1; }  
@@ -138,8 +164,8 @@
         }  
         .room-recommend-grid { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }  
 
-        /* Map */  
-        #map-container { flex: 1; position: relative; }  
+        /* Map Container */  
+        #map-container { flex: 1; position: relative; display: flex; flex-direction: column; }  
         #map { width: 100%; height: 100%; z-index: 1; }  
         .top-bar {  
             position: absolute; top: calc(12px + var(--safe-top)); left: 12px; right: 12px; z-index: 400;  
@@ -160,11 +186,11 @@
             font-size: 13px; font-weight: 600;  
         }  
         .online-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }  
-        .map-fab { position: absolute; top: 100px; right: 12px; z-index: 100; display: flex; flex-direction: column; gap: 10px; }  
+        .map-fab { position: absolute; top: 100px; right: 12px; z-index: 400; display: flex; flex-direction: column; gap: 10px; }  
         .fab-btn {  
             width: 48px; height: 48px; border-radius: 50%; background: var(--blur);  
             backdrop-filter: blur(12px); color: white; display: flex; align-items: center; justify-content: center;  
-            box-shadow: var(--shadow-sm);  
+            box-shadow: var(--shadow-sm); cursor: pointer; border: none;
         }  
         .leaflet-marker-icon { border: none; box-shadow: none; }  
 
@@ -200,7 +226,7 @@
 
         /* Friends Page */  
         .friend-tabs { display: flex; gap: 16px; margin-bottom: 20px; border-bottom: 1px solid var(--surface-2); }  
-        .friend-tab { padding: 8px 4px; font-size: 15px; color: var(--muted); border-bottom: 2px solid transparent; }  
+        .friend-tab { padding: 8px 4px; font-size: 15px; color: var(--muted); border-bottom: 2px solid transparent; background: transparent; cursor: pointer; }  
         .friend-tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }  
         .friend-list { display: flex; flex-direction: column; gap: 10px; }  
         .friend-item {  
@@ -229,57 +255,29 @@
             border-radius: 0 0 var(--radius-lg) var(--radius-lg); margin-bottom: -60px; z-index: 1;  
         }  
         .profile-avatar-container {  
-            position: relative; z-index: 10000; display: flex; justify-content: center; margin-top: 60px;  
+            position: relative; z-index: 10; display: flex; justify-content: center; margin-top: 60px;  
         }  
         .profile-avatar-big {  
             width: 120px; height: 120px; border-radius: 50%; object-fit: cover;  
             border: 5px solid var(--bg); background: var(--surface);  
-            box-shadow: var(--shadow-md); z-index: 10001;  
+            box-shadow: var(--shadow-md);  
         }  
         .profile-level-big {  
             position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%);  
             background: var(--primary); color: white; font-size: 13px; font-weight: 800;  
             width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;  
-            border: 3px solid var(--bg); z-index: 10002;  
+            border: 3px solid var(--bg); z-index: 12;  
         }  
         .profile-name-big { text-align: center; font-size: 28px; font-weight: 800; margin-top: 16px; }  
         .profile-tier-line { text-align: center; margin: 8px 0; }  
         .profile-bio-text { text-align: center; color: var(--muted); margin-bottom: 24px; padding: 0 16px; }  
         .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; text-align: center; }  
-        .stat-item { }  
         .stat-val { font-size: 20px; font-weight: 800; }  
         .stat-lab { font-size: 11px; color: var(--muted); margin-top: 2px; }  
-        .privacy-selector { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }  
-        .privacy-option { padding: 8px 14px; border-radius: var(--radius-pill); background: var(--surface); color: var(--muted); border: 2px solid transparent; }  
-        .privacy-option.active { border-color: var(--primary); color: var(--primary); background: rgba(59,130,246,0.1); }  
-        .logout-btn { margin-top: 24px; width: 100%; }  
-
-        /* Chat Page */
-        .chat-tabs { display: flex; gap: 16px; margin-bottom: 20px; border-bottom: 1px solid var(--surface-2); }
-        .chat-tab { padding: 8px 4px; font-size: 15px; color: var(--muted); border-bottom: 2px solid transparent; }
-        .chat-tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
-        .conv-list { display: flex; flex-direction: column; gap: 2px; background: var(--surface); border-radius: var(--radius-md); overflow: hidden; }
-        .conv-item {
-            display: flex; align-items: center; gap: 12px; padding: 14px;
-            transition: background 0.2s; cursor: pointer;
-        }
-        .conv-item:active { background: var(--surface-2); }
-        .conv-item.unread { background: rgba(59,130,246,0.08); }
-        .conv-avatar { width: 46px; height: 46px; border-radius: 50%; object-fit: cover; border: 2px solid var(--surface-2); flex-shrink: 0; }
-        .conv-content { flex: 1; min-width: 0; }
-        .conv-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 3px; }
-        .conv-name { font-weight: 600; font-size: 15px; }
-        .unread .conv-name { font-weight: 800; }
-        .conv-time { font-size: 11px; color: var(--muted); }
-        .unread .conv-time { font-weight: 600; color: var(--primary); }
-        .conv-preview { font-size: 13px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-        /* History Page */
-        .history-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-        .history-tab { padding: 8px 14px; font-size: 13px; border-radius: var(--radius-pill); background: var(--surface); color: var(--muted); border: none; }
-        .history-tab.active { background: var(--primary); color: white; }
-        .history-card-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--surface-2); }
-        .history-card-row:last-child { border-bottom: none; }
+        .privacy-selector { display: flex; gap: 8px; margin-top: 12px; }  
+        .privacy-option { flex: 1; padding: 10px; border-radius: var(--radius-md); background: var(--surface-2); color: var(--muted); border: none; cursor: pointer; }  
+        .privacy-option.active { background: var(--primary); color: white; }  
+        .logout-btn { margin-top: 32px; }  
 
         /* Bottom Sheet / Modal */  
         .sheet-overlay {  
@@ -295,321 +293,305 @@
         }  
         .sheet-overlay.active .sheet-content { transform: translateY(0); }  
         .sheet-handle { width: 36px; height: 4px; background: var(--surface-2); border-radius: 2px; margin: 0 auto 16px; }  
-        .sheet-title { font-size: 20px; font-weight: 700; margin-bottom: 16px; text-align: center; }
+        .sheet-title { font-size: 20px; font-weight: 700; margin-bottom: 16px; text-align: center; }  
+
+        /* Chat & History */  
+        .chat-tabs, .history-tabs { display: flex; gap: 16px; margin-bottom: 20px; border-bottom: 1px solid var(--surface-2); }  
+        .chat-tab, .history-tab { padding: 8px 4px; font-size: 15px; color: var(--muted); border-bottom: 2px solid transparent; background: transparent; cursor: pointer; }  
+        .chat-tab.active, .history-tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }  
+        .conv-list, .history-list { display: flex; flex-direction: column; gap: 10px; }  
+        .conv-item, .history-card-row {  
+            display: flex; align-items: center; gap: 12px; background: var(--surface);  
+            border-radius: var(--radius-md); padding: 12px; cursor: pointer;  
+        }  
+        .history-card-row span { color: var(--muted); }  
+        .history-card-row strong { margin-left: auto; font-size: 15px; }
     </style>
 </head>
 <body>
-    <div id="app">
-        <!-- ==============================================
-            LAUNCH FLOW — Auth / Register / Room
-            ============================================== -->
-        <div id="launch-screen" class="launch-screen">
-            <!-- L0: Branding -->
-            <div id="launch-step-brand" class="launch-step active fade-in-up" style="text-align:center; margin-top:80px;">
-                <h1 class="launch-logo">BAL0Y</h1>
-                <p class="launch-sub">Social Journey Map</p>
-                <button class="btn btn-primary bounce-btn" style="width:200px; margin-top:40px;" onclick="goToLaunchStep('check')">Mulai</button>
+
+    <!-- Launch / Onboarding Screen -->
+    <div id="launchScreen" class="launch-screen">
+        <div class="launch-logo">GeoChat</div>
+        <div class="launch-sub">Connect With Real World</div>
+        
+        <!-- Step 1: Welcome -->
+        <div id="stepWelcome" class="launch-step active">
+            <div class="launch-welcome">Selamat Datang!</div>
+            <div class="launch-desc">Temukan teman dan jelajahi lokasi sekitar secara real-time dengan mudah.</div>
+            <button class="btn btn-primary btn-block bounce-btn" onclick="nextLaunchStep(2)">Mulai Sekarang</button>
+        </div>
+
+        <!-- Step 2: Input Profil -->
+        <div id="stepProfile" class="launch-step">
+            <div class="step-title">Atur Profilmu</div>
+            <div class="step-desc">Masukkan nama panggilan dan pilih warna marker kamu.</div>
+            
+            <div class="input-wrap">
+                <input type="text" id="inputUsername" class="input-field" placeholder="Nama Panggilan" autocomplete="off">
             </div>
 
-            <!-- L1: Welcome — Auto Check Login -->
-            <div id="launch-step-welcome" class="launch-step hidden">
-                <div style="text-align:center; margin-bottom:40px;">
-                    <h2 class="launch-welcome" id="welcome-title">Selamat datang di BAL0Y</h2>
-                    <p class="launch-desc" id="welcome-desc">Berbagi perjalanan, temukan teman, jelajah bersama</p>
-                </div>
-                <div class="launch-buttons">
-                    <button id="btn-login" class="btn btn-primary bounce-btn" onclick="handleLogin()" style="display:none;">Masuk</button>
-                    <button id="btn-register" class="btn btn-primary bounce-btn" onclick="goToLaunchStep('register')">Buat Akun</button>
-                </div>
+            <div class="color-grid">
+                <div class="color-option selected" style="background:#3B82F6;" onclick="selectColor('#3B82F6', this)"></div>
+                <div class="color-option" style="background:#22C55E;" onclick="selectColor('#22C55E', this)"></div>
+                <div class="color-option" style="background:#EF4444;" onclick="selectColor('#EF4444', this)"></div>
+                <div class="color-option" style="background:#F59E0B;" onclick="selectColor('#F59E0B', this)"></div>
+                <div class="color-option" style="background:#8B5CF6;" onclick="selectColor('#8B5CF6', this)"></div>
+                <div class="color-option" style="background:#EC4899;" onclick="selectColor('#EC4899', this)"></div>
             </div>
 
-            <!-- R1: Username -->
-            <div id="launch-step-register" class="launch-step hidden">
-                <h2 class="step-title">Nama Pengguna</h2>
-                <p class="step-desc">Pilih nama unik untuk identitasmu</p>
-                <div class="input-wrap">
-                    <input type="text" id="reg-username" class="input-field" placeholder="Nama pengguna" maxlength="12" oninput="validateUsername(this.value)">
-                    <p id="username-hint" class="input-hint"></p>
-                </div>
-                <div class="launch-nav">
-                    <button class="btn back-btn" onclick="goToLaunchStep('welcome')">Kembali</button>
-                    <button id="reg-step1-next" class="btn btn-primary bounce-btn" onclick="goToLaunchStep('color')" disabled>Lanjut</button>
-                </div>
-                <div class="progress-dots">
-                    <span class="progress-dot active"></span>
-                    <span class="progress-dot"></span>
-                    <span class="progress-dot"></span>
-                    <span class="progress-dot"></span>
-                    <span class="progress-dot"></span>
-                    <span class="progress-dot"></span>
-                </div>
+            <div class="launch-nav">
+                <button class="back-btn" onclick="nextLaunchStep(1)">Kembali</button>
+                <button class="btn btn-primary btn-sm bounce-btn" onclick="nextLaunchStep(3)">Lanjut</button>
+            </div>
+        </div>
+
+        <!-- Step 3: Room Selection -->
+        <div id="stepRoom" class="launch-step">
+            <div class="step-title">Pilih Ruangan</div>
+            <div class="step-desc">Bergabunglah dengan room publik atau buat room baru.</div>
+            
+            <div class="room-option-card selected" onclick="selectRoomType('public')">
+                <div class="room-name">Global Public Room</div>
+                <div class="room-meta"><span>🌐 Publik</span><span>•</span><span>Ramai Pengguna</span></div>
             </div>
 
-            <!-- R2: Color -->
-            <div id="launch-step-color" class="launch-step hidden">
-                <h2 class="step-title">Pilih Warna</h2>
-                <p class="step-desc">Mewakili dirimu di peta</p>
-                <div class="color-grid">
-                    <div class="color-option" data-color="#22C55E" data-name="Hijau" onclick="selectColor(this)" style="background:#22C55E;"></div>
-                    <div class="color-option" data-color="#3B82F6" data-name="Biru" onclick="selectColor(this)" style="background:#3B82F6;"></div>
-                    <div class="color-option" data-color="#EAB308" data-name="Kuning" onclick="selectColor(this)" style="background:#EAB308;"></div>
-                    <div class="color-option" data-color="#EF4444" data-name="Merah" onclick="selectColor(this)" style="background:#EF4444;"></div>
-                    <div class="color-option" data-color="#8B5CF6" data-name="Ungu" onclick="selectColor(this)" style="background:#8B5CF6;"></div>
-                    <div class="color-option" data-color="#F97316" data-name="Oranye" onclick="selectColor(this)" style="background:#F97316;"></div>
-                    <div class="color-option" data-color="#EC4899" data-name="Pink" onclick="selectColor(this)" style="background:#EC4899;"></div>
-                    <div class="color-option" data-color="#06B6D4" data-name="Cyan" onclick="selectColor(this)" style="background:#06B6D4;"></div>
-                    <div class="color-option" data-color="#78350F" data-name="Cokelat" onclick="selectColor(this)" style="background:#78350F;"></div>
-                </div>
-                <div class="launch-nav">
-                    <button class="btn back-btn" onclick="goToLaunchStep('register')">Kembali</button>
-                    <button id="color-next" class="btn btn-primary bounce-btn" onclick="goToLaunchStep('avatar')" disabled>Lanjut</button>
-                </div>
-                <div class="progress-dots">
-                    <span class="progress-dot"></span>
-                    <span class="progress-dot active"></span>
-                    <span class="progress-dot"></span>
-                    <span class="progress-dot"></span>
-                    <span class="progress-dot"></span>
-                    <span class="progress-dot"></span>
-                </div>
+            <div class="launch-nav">
+                <button class="back-btn" onclick="nextLaunchStep(2)">Kembali</button>
+                <button class="btn btn-success btn-sm bounce-btn" onclick="finishLaunch()">Masuk Aplikasi</button>
             </div>
+        </div>
 
-            <!-- R3: Avatar -->
-            <div id="launch-step-avatar" class="launch-step hidden">
-                <h2 class="step-title">Foto Profil</h2>
-                <p class="step-desc">Agar teman mudah mengenalimu</p>
-                <label class="avatar-upload-area bounce-btn" id="avatar-upload" style="cursor:pointer;">
-                    <input type="file" accept="image/*" id="avatar-input" style="display:none;" onchange="handleAvatarUpload(event)">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted);">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="17 8 12 3 7 8"></polyline>
-                        <line x1="12" y1="3" x2="12" y2="15"></line>
-                    </svg>
-                    <span>Ketuk untuk upload</span>
-                </label>
-                <div class="launch-nav">
-                    <button class="btn back-btn" onclick="goToLaunchStep('color')">Kembali</button>
-                    <button id="avatar-next" class="btn btn-primary bounce-btn" onclick="goToLaunchStep('bio')">Lanjut</button>
-                </div>
-                <div class="progress-dots">
-                    <span class="progress-dot"></span>
-                    <span class="progress-dot"></span>
-                    <span class="progress-dot active"></span>
-                    <span class="progress-dot"></span>
-                    <span class="progress-dot"></span>
-                    <span class="progress-dot"></span>
-                </div>
-            </div>
+        <div class="progress-dots">
+            <div class="progress-dot active" id="dot1"></div>
+            <div class="progress-dot" id="dot2"></div>
+            <div class="progress-dot" id="dot3"></div>
+        </div>
+    </div>
 
-            <!-- R4: Bio -->
-            <div id="launch-step-bio" class="launch-step hidden">
-                <h2 class="step-title">Bio</h2>
-                <p class="step-desc">Ceritakan sedikit tentangmu (opsional)</p>
-                <div class="input-wrap">
-                    <input type="text" id="bio-input" class="input-field" placeholder="Suka jalan dan mencari tempat baru..." maxlength="60">
+    <!-- Main Map Container & Top Bar -->
+    <div id="map-container">
+        <div class="top-bar">
+            <div class="top-row">
+                <div class="top-left">
+                    <span class="time-text" id="currentTime">00:00</span>
+                    <span class="date-text" id="currentDate">Memuat...</span>
                 </div>
-                <div class="launch-nav">
-                    <button class="btn back-btn" onclick="goToLaunchStep('avatar')">Kembali</button>
-                    <button class="btn btn-primary bounce-btn" onclick="goToLaunchStep('room')">Lanjut</button>
+                <div class="top-center-room">
+                    <span class="room-name-text" id="activeRoomName">Global Room</span>
                 </div>
-                <div class="progress-dots">
-                    <span class="progress-dot"></span>
-                    <span class="progress-dot"></span>
-                    <span class="progress-dot"></span>
-                    <span class="progress-dot active"></span>
-                    <span class="progress-dot"></span>
-                    <span class="progress-dot"></span>
-                </div>
-            </div>
-
-            <!-- R5: Room Selection -->
-            <div id="launch-step-room" class="launch-step hidden">
-                <h2 class="step-title">Pilih Room</h2>
-                <p class="step-desc">Bergabunglah dengan teman-temanmu</p>
-                
-                <div class="room-option-card" onclick="openCreateRoomSheet()">
-                    <div class="room-name">➕ Buat Room Baru</div>
-                    <div class="room-meta">Jadilah admin dan undang teman</div>
-                </div>
-
-                <div class="room-option-card" onclick="openFindRoomSheet()">
-                    <div class="room-name">🔍 Cari Room</div>
-                    <div class="room-meta">Masukkan ID Room untuk bergabung</div>
-                </div>
-
-                <div style="margin-top:24px;">
-                    <p style="font-size:14px; color:var(--muted); margin-bottom:12px;">Rekomendasi</p>
-                    <div class="room-recommend-grid">
-                        <div class="room-option-card" onclick="joinRecommendedRoom('BAL0Y KOTA', 'BAL-12345', 23, 12, true)">
-                            <div class="room-name">BAL0Y KOTA</div>
-                            <div class="room-meta">23 Member · 12 Online · Publik</div>
-                        </div>
-                        <div class="room-option-card" onclick="joinRecommendedRoom('BAL0Y TEMAN', 'BAL-67890', 6, 4, true)">
-                            <div class="room-name">BAL0Y TEMAN</div>
-                            <div class="room-meta">6 Member · 4 Online · Publik</div>
-                        </div>
+                <div class="top-right">
+                    <div class="online-badge">
+                        <div class="online-dot pulse-online"></div>
+                        <span id="onlineCount">1 Online</span>
                     </div>
-                </div>
-
-                <div class="launch-nav" style="margin-top:24px;">
-                    <button class="btn back-btn" onclick="goToLaunchStep('bio')">Kembali</button>
-                    <button class="btn btn-outline bounce-btn" onclick="skipRoom()">Lewati Dulu</button>
-                </div>
-                <div class="progress-dots">
-                    <span class="progress-dot"></span>
-                    <span class="progress-dot"></span>
-                    <span class="progress-dot"></span>
-                    <span class="progress-dot"></span>
-                    <span class="progress-dot active"></span>
-                    <span class="progress-dot"></span>
                 </div>
             </div>
         </div>
 
-        <!-- ==============================================
-            MAIN APP — MAP + Pages
-            ============================================== -->
-        <div id="main-ui" class="hidden" style="display:flex;flex-direction:column;flex:1;">
-            <div id="map-container">
-                <div id="map"></div>
+        <!-- Floating Action Buttons di Map -->
+        <div class="map-fab">
+            <button class="fab-btn" onclick="recenterMap()" title="Pusatkan Lokasi">📍</button>
+            <button class="fab-btn" onclick="openChatSheet()" title="Buka Obrolan">💬</button>
+        </div>
 
-                <!-- Top Bar -->
-                <div class="top-bar">
-                    <div class="top-row">
-                        <div class="top-left">
-                            <span class="time-text" id="current-time">00:00</span>
-                            <span class="date-text" id="current-date">Senin, 1 Januari 2026</span>
-                        </div>
-                        <div class="top-center-room">
-                            <span class="room-name-text" id="current-room-name">Tidak ada Room</span>
-                        </div>
-                        <div class="top-right">
-                            <div class="weather-wrap">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="5"></circle>
-                                    <line x1="12" y1="1" x2="12" y2="3"></line>
-                                    <line x1="12" y1="21" x2="12" y2="23"></line>
-                                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                                    <line x1="1" y1="12" x2="3" y2="12"></line>
-                                    <line x1="21" y1="12" x2="23" y2="12"></line>
-                                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                                </svg>
-                                <span id="weather-text">Cerah</span>
-                            </div>
-                            <div class="online-badge">
-                                <span class="online-dot pulse-online"></span>
-                                <span id="active-count">0</span> Aktif
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <!-- Peta Leaflet -->
+        <div id="map"></div>
+    </div>
 
-                <!-- FAB Buttons -->
-                <div class="map-fab">
-                    <button class="fab-btn bounce-btn" onclick="locateUser()" title="Lokasi Saya">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
-                        </svg>
-                    </button>
-                    <button class="fab-btn bounce-btn" onclick="openRoomSwitchSheet()" title="Ganti Room">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
-                    </button>
-                    <button class="fab-btn bounce-btn" onclick="toggleTracking()" id="track-btn" title="GPS Tracking">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M12 22s8-4 8-10s-4-8-8-8s-8 4-8 10s4 10 8 10z"></path>
-                            <circle cx="12" cy="12" r="3"></circle>
-                        </svg>
-                    </button>
-                </div>
+    <!-- Pages (Tab Konten Lainnya) -->
+    <!-- Friends Page -->
+    <div id="pageFriends" class="page">
+        <div class="page-header">
+            <div class="page-title">Teman</div>
+            <button class="btn btn-primary btn-sm">+ Tambah</button>
+        </div>
+        <div class="friend-tabs">
+            <button class="friend-tab active">Semua (0)</button>
+            <button class="friend-tab">Permintaan</button>
+        </div>
+        <div class="friend-list" id="friendListContainer">
+            <div style="text-align: center; color: var(--muted); margin-top: 40px;">Belum ada teman ditambahkan</div>
+        </div>
+    </div>
+
+    <!-- Profile Page -->
+    <div id="pageProfile" class="page" style="padding: 0;">
+        <div class="profile-cover"></div>
+        <div class="profile-avatar-container">
+            <img src="https://via.placeholder.com/120" alt="Avatar" class="profile-avatar-big" id="profileAvatarBig">
+            <div class="profile-level-big">1</div>
+        </div>
+        <div class="profile-name-big" id="profileNameDisplay">User</div>
+        <div class="profile-tier-line">
+            <span class="badge tier-silver">Silver Tier</span>
+        </div>
+        <div class="profile-bio-text">Menjelajahi dunia bersama GeoChat.</div>
+        
+        <div class="card" style="margin: 16px;">
+            <div class="stat-grid">
+                <div class="stat-item"><div class="stat-val">0</div><div class="stat-lab">Jarak</div></div>
+                <div class="stat-item"><div class="stat-val">0</div><div class="stat-lab">Check-in</div></div>
+                <div class="stat-item"><div class="stat-val">1</div><div class="stat-lab">Level</div></div>
+                <div class="stat-item"><div class="stat-val">0</div><div class="stat-lab">Teman</div></div>
             </div>
+        </div>
 
-            <!-- Bottom Navigation -->
-            <nav class="bottom-nav">
-                <button class="nav-item active" data-page="map" onclick="switchPage('map')">
-                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                        <circle cx="12" cy="10" r="3"></circle>
-                    </svg>
-                    <span>Peta</span>
-                </button>
-                <button class="nav-item" data-page="friends" onclick="switchPage('friends')">
-                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="9" cy="7" r="4"></circle>
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                    </svg>
-                    <span>Teman</span>
-                </button>
-                <button class="nav-item" data-page="chat" onclick="switchPage('chat')">
-                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                    </svg>
-                    <span>Chat</span>
-                </button>
-                <button class="nav-item" data-page="history" onclick="switchPage('history')">
-                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg>
-                    <span>Riwayat</span>
-                </button>
-                <button class="nav-item" data-page="profile" onclick="switchPage('profile')">
-                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                    <span>Profil</span>
-                </button>
-            </nav>
+        <div class="card" style="margin: 16px;">
+            <div class="section-title" style="margin-bottom: 8px;">Privasi Lokasi</div>
+            <div class="privacy-selector">
+                <button class="privacy-option active">Publik</button>
+                <button class="privacy-option">Teman</button>
+                <button class="privacy-option">Sembunyi</button>
+            </div>
+        </div>
 
-            <!-- ============================================== PAGES ============================================== -->
+        <div style="padding: 0 16px 32px 16px;">
+            <button class="btn btn-danger btn-block logout-btn" onclick="location.reload()">Keluar / Reset</button>
+        </div>
+    </div>
 
-            <!-- Friends Page -->
-            <div id="page-friends" class="page">
-                <div class="page-header">
-                    <h1 class="page-title">Teman</h1>
-                </div>
-                <div class="friend-tabs">
-                    <button class="friend-tab active">Semua</button>
-                    <button class="friend-tab">Online</button>
-                    <button class="friend-tab">Permintaan</button>
-                </div>
-                <div class="friend-list">
-                    <div class="friend-item">
-                        <div class="friend-avatar-wrap">
-                            <img class="friend-avatar" src="https://picsum.photos/seed/user1/100/100" style="border-color: #22C55E;">
-                            <span class="friend-level">5</span>
-                        </div>
-                        <div class="friend-info">
-                            <div class="friend-name-row">
-                                <span class="friend-name">Rizky</span>
-                                <span class="friend-tier tier-silver">Silver</span>
-                            </div>
-                            <p class="friend-status"><span class="status-dot"></span> Aktif 5m lalu</p>
-                        </div>
-                    </div>
-                    <div class="friend-item">
-                        <div class="friend-avatar-wrap">
-                            <img class="friend-avatar" src="https://picsum.photos/seed/user2/100/100" style="border-color: #3B82F6;">
-                            <span class="friend-level">12</span>
-                        </div>
-                        <div class="friend-info">
-                            <div class="friend-name-row">
-                                <span class="friend-name">Sarah</span>
-                                <span class="friend-tier tier-gold">Gold</span>
-                            </div>
-                            <p class="friend-status"><span class="status-dot"></span> Sedang berbagi lokasi</p>
-                        </div>
-                    </div>
-                    <div class="friend-item">
-                        <div class="friend-avatar-wrap">
-                            <img class="friend-avatar" src="https://picsum.photos/seed/user3/100/100" style="border-color: #F59E0
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" onclick="switchTab('map', this)">
+            <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+            <span>Peta</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('friends', this)">
+            <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg>
+            <span>Teman</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('profile', this)">
+            <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+            <span>Profil</span>
+        </button>
+    </nav>
+
+    <!-- Bottom Sheet Chat / Umum -->
+    <div id="chatSheet" class="sheet-overlay" onclick="closeChatSheet(event)">
+        <div class="sheet-content" onclick="event.stopPropagation()">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title">Ruang Obrolan Global</div>
+            <div style="height: 200px; display: flex; align-items: center; justify-content: center; color: var(--muted);">
+                Belum ada pesan dalam room ini.
+            </div>
+            <div class="input-wrap" style="margin-top: 12px;">
+                <input type="text" class="input-field" placeholder="Ketik pesan...">
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
+    <script>
+        let map, userMarker;
+        let selectedColorHex = '#3B82F6';
+
+        // Update Waktu Real-Time
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const dateString = now.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' });
+            document.getElementById('currentTime').textContent = timeString;
+            document.getElementById('currentDate').textContent = dateString;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Navigasi Langkah Onboarding
+        function nextLaunchStep(stepNumber) {
+            document.querySelectorAll('.launch-step').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.progress-dot').forEach(el => el.classList.remove('active'));
+            
+            if(stepNumber === 1) {
+                document.getElementById('stepWelcome').classList.add('active');
+                document.getElementById('dot1').classList.add('active');
+            } else if(stepNumber === 2) {
+                document.getElementById('stepProfile').classList.add('active');
+                document.getElementById('dot2').classList.add('active');
+            } else if(stepNumber === 3) {
+                const username = document.getElementById('inputUsername').value.trim() || 'User';
+                document.getElementById('profileNameDisplay').textContent = username;
+                document.getElementById('stepRoom').classList.add('active');
+                document.getElementById('dot3').classList.add('active');
+            }
+        }
+
+        function selectColor(hex, element) {
+            document.querySelectorAll('.color-option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedColorHex = hex;
+        }
+
+        function selectRoomType(type) {
+            document.getElementById('activeRoomName').textContent = type === 'public' ? 'Global Room' : 'Custom Room';
+        }
+
+        function finishLaunch() {
+            document.getElementById('launchScreen').classList.add('hidden');
+            initMap();
+        }
+
+        // Inisialisasi Peta Leaflet
+        function initMap() {
+            if (map) return;
+            map = L.map('map', { zoomControl: false }).setView([-6.200000, 106.816666], 15);
+            
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{z}.png', {
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap'
+            }).addTo(map);
+
+            // Buat marker awal pengguna
+            userMarker = L.circleMarker([-6.200000, 106.816666], {
+                radius: 8,
+                fillColor: selectedColorHex,
+                color: '#ffffff',
+                weight: 2,
+                opacity: 1,
+                fillOpacity: 0.9
+            }).addTo(map);
+        }
+
+        function recenterMap() {
+            if (map && userMarker) {
+                map.setView(userMarker.getLatLng(), 16);
+            }
+        }
+
+        // Navigasi Antar Tab Bawah
+        function switchTab(tabName, element) {
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const mapContainer = document.getElementById('map-container');
+
+            if (tabName === 'map') {
+                mapContainer.style.display = 'flex';
+                if (map) setTimeout(() => map.invalidateSize(), 100);
+            } else {
+                mapContainer.style.display = 'none';
+                if (tabName === 'friends') {
+                    document.getElementById('pageFriends').classList.add('active');
+                } else if (tabName === 'profile') {
+                    document.getElementById('pageProfile').classList.add('active');
+                }
+            }
+        }
+
+        // Modal Bottom Sheet Chat
+        function openChatSheet() {
+            document.getElementById('chatSheet').classList.add('active');
+        }
+
+        function closeChatSheet(e) {
+            if (!e || e.target.id === 'chatSheet') {
+                document.getElementById('chatSheet').classList.remove('active');
+            }
+        }
+    </script>
+</body>
+</html>
+            
