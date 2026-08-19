@@ -1,7 +1,35 @@
-name: No Build Needed
-on: [push]
+name: Deploy BAL0Y ke GitHub Pages
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
-  no-op:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Static HTML app — no build required "
+      - name: Ambil kode
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artefak HTML
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'  # ⬅️ Pakai semua file di root
+
+      - name: Deploy ke GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
