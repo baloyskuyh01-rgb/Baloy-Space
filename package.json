@@ -1,1 +1,20 @@
-
+{
+  "name": "baloy",
+  "version": "1.0.0",
+  "description": "Baloy - Social and Map Application",
+  "private": true,
+  "scripts": {
+    "build": "echo No web build required",
+    "cap:add": "npx cap add android",
+    "cap:sync": "npx cap sync android",
+    "cap:open": "npx cap open android",
+    "cap:build": "npx cap build android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.6.0",
+    "@capacitor/core": "^7.6.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.6.0"
+  }
+}
