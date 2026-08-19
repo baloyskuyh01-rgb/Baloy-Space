@@ -1,20 +1,26 @@
 {
   "name": "baloy",
   "version": "1.0.0",
-  "description": "Baloy - Social and Map Application",
-  "private": true,
+  "description": "BAL0Y — Social Journey Map. Lihat lokasi teman, berbagi perjalanan, chat, dan jelajah bersama!",
+  "main": "index.html",
+  "homepage": "https://github.com/namakamu/Baloy-Space",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/namakamu/Baloy-Space.git"
+  },
   "scripts": {
-    "build": "echo No web build required",
-    "cap:add": "npx cap add android",
-    "cap:sync": "npx cap sync android",
-    "cap:open": "npx cap open android",
-    "cap:build": "npx cap build android"
+    "start": "npx serve .",
+    "build": "echo '✅ Tidak perlu build — buka index.html langsung!'"
   },
-  "dependencies": {
-    "@capacitor/android": "7.6.0",
-    "@capacitor/core": "7.6.0"
-  },
-  "devDependencies": {
-    "@capacitor/cli": "7.6.0"
-  }
+  "keywords": [
+    "baloy",
+    "social",
+    "map",
+    "journey",
+    "gps",
+    "chat",
+    "friends"
+  ],
+  "author": "BAL0Y Team",
+  "license": "MIT"
 }
