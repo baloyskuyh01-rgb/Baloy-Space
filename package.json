@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "BAL0Y — Social Journey Map. Lihat lokasi teman, berbagi perjalanan, chat, dan jelajah bersama!",
   "main": "index.html",
-  "homepage": "https://github.com/baloy/Baloy-Space",
+  "homepage": "https://github.com/baloyskuyh01-rgb/Baloy-Space",
   "repository": {
     "type": "git",
-    "url": "https://github.com/namakamu/Baloy-Space.git"
+    "url": "https://github.com/baloyskuyh01-rgb/Baloy-Space.git"
   },
   "scripts": {
     "start": "npx serve .",
@@ -21,6 +21,6 @@
     "chat",
     "friends"
   ],
-  "author": "BAL0Y Team",
+  "author": "baloyskuyh01-rgb",
   "license": "MIT"
 }
