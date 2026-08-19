@@ -1,0 +1,6 @@
+{
+  "appId": "com.baloy.social",
+  "appName": "Baloy",
+  "webDir": ".",
+  "bundledWebRuntime": false
+}
